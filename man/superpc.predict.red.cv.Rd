@@ -23,7 +23,6 @@ superpc.predict.red.cv(fitred, fitcv, data, threshold, n.shrinkage = 30, sign.wt
 \value{
 \item{shrinkages}{Shrinkage values used}
 \item{lrtest.shrink}{ Likeihood ratio tests for reduced models }
-% superivsed PC predictor}
 \item{num.features}{Number of features used in each shrunken model}
 \item{n.components }{Number of supervised  principal components used}
 

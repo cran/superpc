@@ -6,13 +6,14 @@
 Plots pre-validation results from plotcv, to aid in choosing best threshold
 }
 \usage{
-superpc.plotcv(object, smooth = TRUE, smooth.df = 10, ...)
+superpc.plotcv(object, smooth = TRUE, smooth.df = 6, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{ Object returned by superpc.cv }
   \item{smooth}{ Should plot be smoothed? Default TRUE. }
-  \item{smooth.df}{ Degrees of fredom for smooth.spline, default 10.}
+  \item{smooth.df}{ Degrees of freedom for smooth.spline, default 6.
+If NULL, then degrees of freedom is estimated by cross-validation.}
   \item{\dots}{ Additional plotting args to be passed to matplot }
 }
 \details{
