@@ -1,23 +1,38 @@
-superpc.listfeatures<- function(data, train.obj, fitred, component.number, shrinkage){
+superpc.listfeatures<- function(data, train.obj, fit.red, 
+num.features=NULL, component.number=1){
 
-if( shrinkage < min(fitred$shrinkages) |  shrinkage > max(fitred$shrinkages)){
-    stop("Error: shrinkage value out of range")
+ii=component.number
+total.num=sum(abs(fit.red$import[,ii])>0)
+
+if(is.null(num.features)){ num.features=total.num}
+
+if(num.features< 1 | num.features > total.num){
+
+    stop("Error: num.features   argument out of range")
+
 }
-
-temp<- abs(shrinkage- fitred$shrinkages)
-
-ii<-(1:length(temp))[temp==min(temp)]
 
 featurenames.short<- substring(data$featurenames,1,40)
 
-oo=fitred$feature.list[[ii]][[component.number]]
 
-res<-cbind(round(fitred$import[oo,component.number],3), round(train.obj$feature.scores[oo],3), featurenames.short[oo])
+ii=component.number
 
+oo=rank(abs(fit.red$import[,ii]))> nrow(data$x)-num.features
 
+res<-cbind(round(fit.red$import[oo,ii],3), round(train.obj$feature.scores[oo],3),
+#round(fit.red$wt[oo,ii],3),
+ featurenames.short[oo])
 
-o<-order(-abs(fitred$import[oo,component.number]))
+collabs=c("Importance-score", "Raw-score" , "Name")
+
+if(!is.null(data$featureid)){
+  res=cbind(res, data$featureid[oo])
+ collabs=c(collabs, "ID")
+}
+
+o<-order(-abs(fit.red$import[oo,ii]))
 res<-res[o,]
-dimnames(res)<-list(NULL,c("Importance-score", "Raw-score", "Name"))
+dimnames(res)<-list(NULL,collabs)
+
 return(res)
 }

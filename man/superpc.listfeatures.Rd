@@ -5,15 +5,15 @@
  Return a list of the important predictor
 }
 \usage{
-superpc.listfeatures(data, train.obj, fitred, component.number, shrinkage)
+superpc.listfeatures(data, train.obj, fit.red, num.features=NULL, component.number = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{data}{Data object }
   \item{train.obj}{Object returned by superpc.train}
-  \item{fitred}{Object returned by superpc.predict.red}
-  \item{component.number}{ Index of principal component to use (1,2, or 3) }
-  \item{shrinkage}{Amount of shrinkage  }
+  \item{fit.red}{Object returned by superpc.predict.red, applied to training set}
+  \item{num.features}{Number of features to list. Default is all features.  }
+  \item{component.number}{Number of principal component (1,2, or 3) used to determine feature importance scores}
  }
 }
 \details{
@@ -34,18 +34,18 @@ for that feature; for regression, it is the standardized regression coefficient.
 x<-matrix(rnorm(1000*40),ncol=40)
 y<-10+svd(x[1:60,])$v[,1]+ .1*rnorm(40)
 ytest<-10+svd(x[1:60,])$v[,1]+ .1*rnorm(40)
-status<- sample(c(rep(1,30),rep(0,10)))
-status.test<- sample(c(rep(1,30),rep(0,10)))
+censoring.status<- sample(c(rep(1,30),rep(0,10)))
+censoring.status.test<- sample(c(rep(1,30),rep(0,10)))
 featurenames <- paste("feature",as.character(1:1000),sep="")
-data<-list(x=x,y=y, status=status, featurenames=featurenames)
-data.test<-list(x=x,y=ytest, status=status.test, featurenames= featurenames)
+data<-list(x=x,y=y, censoring.status=censoring.status, featurenames=featurenames)
+data.test<-list(x=x,y=ytest, censoring.status=censoring.status.test, featurenames= featurenames)
 
 a<- superpc.train(data, type="survival")
 
 fit<- superpc.predict(a, data, data.test, threshold=1.0, n.components=1, prediction.type="continuous")
 
 fit.red<- superpc.predict.red(a,data, data.test, .6)
-superpc.listfeatures(data, a,  fit.red,1,shrinkage=0.3)
+superpc.listfeatures(data, a,  fit.red, num.features=20)
 
 }
 \keyword{regression}% at least one, from doc/KEYWORDS

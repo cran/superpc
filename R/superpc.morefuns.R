@@ -1,6 +1,6 @@
 cor.func<- 
 
-function (x, y, fudge = median(sd)) 
+function (x, y, s0.perc ) 
 {
     n <- length(y)
     xbar <- x %*% rep(1/n, n)
@@ -9,18 +9,44 @@ function (x, y, fudge = median(sd))
     syy <- sum((y - mean(y))^2)
     numer <- sxy/sxx
     sd <- sqrt((syy/sxx - numer^2)/(n - 2))
+
+if(is.null(s0.perc)){ fudge=median(sd)}
+if(!is.null(s0.perc)){
+ if(s0.perc>=0){
+  fudge=quantile(sd,s0.perc)
+  }
+ if(s0.perc<0){
+   fudge=0
+  }
+}
     tt <- numer/(sd + fudge)
-    return(list(tt = tt, numer = numer, sd = sd))
+
+    return(list(tt = tt, numer = numer, sd = sd, fudge=fudge ))
 }
 
 coxfunc <- 
-function(x, y, status, fudge = median(sd))
+function(x, y, censoring.status, s0.perc)
 {
-        junk <- coxscor(x, y, status)
+
+        junk <- coxscor(x, y, censoring.status)
         scor<-junk$scor
-        sd <- sqrt(coxvar(x, y, status, coxstuff.obj=junk$coxstuff.obj))
+        sd <- sqrt(coxvar(x, y, censoring.status, coxstuff.obj=junk$coxstuff.obj))
+
+if(is.null(s0.perc)){ fudge=median(sd)}
+if(!is.null(s0.perc)){
+if(s0.perc>=0){
+  fudge=quantile(sd,s0.perc)
+  }
+ if(s0.perc<0){
+   fudge=0
+  }
+
+
+}
+
         tt <- scor/(sd + fudge)
-        return(list(tt = tt, numer = scor, sd = sd))
+
+        return(list(tt = tt, numer = scor, sd = sd, fudge=fudge ))
 }
 
 
@@ -124,8 +150,9 @@ function(x, y, ic, offset = rep(0., length(y)))
 }
          oo <- match(y, fail.times)
          oo[ic==0]<-NA
+         oo[is.na(oo)]<- max(oo[!is.na(oo)])+1
          s<-t(rowsum(t(x),oo))
-         s<-s[,-ncol(s)]
+       if(ncol(s)> nf){s<-s[,-ncol(s)]}
         dd <- rep(0., n)
         for(j in 1.:nf) {
                 dd[(y == fail.times[j]) & (ic == 1.)] <- d[j]
@@ -176,7 +203,9 @@ mysvd<-function(x,  n.components=NULL){
 
 # center the observations (rows)
 
- x<-t(scale(t(x),center=T,scale=F))
+ feature.means<-rowMeans(x)
+x<- t(scale(t(x),center=feature.means,scale=F))
+
 
   if(is.null(n.components)){n.components=min(n,p)}
   if(p>n){
@@ -187,13 +216,13 @@ mysvd<-function(x,  n.components=NULL){
       u<-scale(x%*%v,center=FALSE,scale=d)
  
     
-    return(list(u=u,d=d,v=v))
+    return(list(u=u,d=d,v=v,  feature.means=feature.means))
   }
   else{
 
       junk<-svd(x,LINPACK=TRUE)
       nc=min(ncol(junk$u), n.components)
       return(list(u=junk$u[,1:nc],d=junk$d[1:nc],
-                  v=junk$v[,1:nc]))
+                  v=junk$v[,1:nc], feature.means=feature.means))
 }
 }

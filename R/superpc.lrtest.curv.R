@@ -33,7 +33,7 @@ superpc.lrtest.curv <- function (object, data, newdata, n.components=1, threshol
     
     if(type=="survival"){
       require(survival)
-      junk<- coxph(Surv(newdata$y, newdata$status) ~v.pred)$loglik
+      junk<- coxph(Surv(newdata$y, newdata$censoring.status) ~v.pred)$loglik
       lrtest[ii]<-2*(junk[2]-junk[1])
     }
     else{junk<- summary(lm(newdata$y~v.pred))

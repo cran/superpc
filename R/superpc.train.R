@@ -1,5 +1,5 @@
 superpc.train<-
-  function (data, type=c("survival","regression")){
+  function (data, type=c("survival","regression"), s0.perc=NULL){
     
 # computes feature scores for supervised pc analysis
     
@@ -7,21 +7,26 @@ superpc.train<-
  type <- match.arg(type)
 
   
-  
-  if (is.null(data$status) & type=="survival") {
- stop("Error: survival specified but censoring status is null")
+  if (is.null(data$censoring.status) & type=="survival") {
+ stop("Error: survival specified but  censoring.status is null")
   }
   
+ if (!is.null(data$censoring.status) & type=="regression") {
+ stop("Error: regression specified but  censoring.status is  non-null")
+  }
+
   if (type=="survival") {
-    feature.scores <- coxfunc(data$x, data$y, data$status)$tt
+junk<- coxfunc(data$x, data$y, data$censoring.status, s0.perc=s0.perc)
+feature.scores<-junk$tt
    }
   else {
-    feature.scores <- cor.func(data$x, data$y)$tt
+junk<- cor.func(data$x, data$y, s0.perc=s0.perc)
+feature.scores<-junk$tt
   }
 
   
   junk <- list( feature.scores=feature.scores, 
-               type=type, 
+               type=type, s0.perc=s0.perc, 
                call = this.call)
 
   

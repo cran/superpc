@@ -8,16 +8,19 @@ or survival outcome, by the supervised principal components
 method.
 }
 \usage{
-superpc.train(data, type = c("survival", "regression"))
+superpc.train(data, type = c("survival", "regression"), s0.perc=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{data}{ Data object with components x- p by n matrix of features,
 one observation per column; y- n-vector of outcome measurements;
-status- n-vector of censoring status (1= died or event occurred, 0=survived, or event was censored), needed
+censoring.status- n-vector of censoring censoring.status (1= died or event occurred, 0=survived, or event was censored), needed
 for a censored survival outcome}
   \item{type}{Problem type:  "survival" for censored survival outcome, or "regression"
 for simple quantitative outcome}
+\item{s0.perc}{Factor for denominator of score statistic, between 0 and 1:  the percentile
+of standard deviation values added to the  denominator. Default is 0.5 (the median)}
+
 }
 \details{ Compute wald scores for each feature (gene), for later use in 
 superpc.predict and superpc.cv
@@ -40,10 +43,10 @@ http://www-stat.stanford.edu/~tibs/superpc}
 set.seed(332)
 x<-matrix(rnorm(1000*40),ncol=40)
 y<-10+svd(x[1:60,])$v[,1]+ .1*rnorm(40)
-status<- sample(c(rep(1,30),rep(0,10)))
+censoring.status<- sample(c(rep(1,30),rep(0,10)))
 
 featurenames <- paste("feature",as.character(1:1000),sep="")
-data<-list(x=x,y=y, status=status, featurenames=featurenames)
+data<-list(x=x,y=y, censoring.status=censoring.status, featurenames=featurenames)
 
 
 a<- superpc.train(data, type="survival")

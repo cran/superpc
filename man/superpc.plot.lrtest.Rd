@@ -5,10 +5,11 @@
 Plot likelhiood ratio test statistics from output of superpc.predict
 }
 \usage{
-superpc.plot.lrtest(object.lrtestcurv)
+superpc.plot.lrtest(object.lrtestcurv, call.win.metafile = FALSE)
 }
 \arguments{
   \item{object.lrtestcurv}{Output from superpc.lrtest.curv}
+\item{call.win.metafile}{For use by PAM Excel interface}
 }
 \details{
 }
@@ -26,12 +27,12 @@ set.seed(332)
 x<-matrix(rnorm(1000*40),ncol=40)
 y<-10+svd(x[1:60,])$v[,1]+ .1*rnorm(40)
 ytest<-10+svd(x[1:60,])$v[,1]+ .1*rnorm(40)
-status<- sample(c(rep(1,30),rep(0,10)))
-status.test<- sample(c(rep(1,30),rep(0,10)))
+censoring.status<- sample(c(rep(1,30),rep(0,10)))
+censoring.status.test<- sample(c(rep(1,30),rep(0,10)))
 
 featurenames <- paste("feature",as.character(1:1000),sep="")
-data<-list(x=x,y=y, status=status, featurenames=featurenames)
-data.test<-list(x=x,y=ytest, status=status.test, featurenames= featurenames)
+data<-list(x=x,y=y, censoring.status=censoring.status, featurenames=featurenames)
+data.test<-list(x=x,y=ytest, censoring.status=censoring.status.test, featurenames= featurenames)
 
 
 

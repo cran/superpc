@@ -7,29 +7,22 @@ Uses the output to evaluate reduced models, and compare them to the
 full supervised principal components predictor.
 }
 \usage{
-superpc.predict.red.cv(fitred, fitcv, data, threshold, n.shrinkage = 30, sign.wt = "both")
+superpc.predict.red.cv(fitred, fitcv, data, threshold, sign.wt="both")
 }
 \arguments{
   \item{fitred}{ Output of superpc.predict.red}
   \item{fitcv}{ Output of superpc.cv }
   \item{data}{ Training data object }
   \item{threshold}{Feature score threshold; usually estimated from superpc.cv}
-  \item{n.shrinkage}{Number of shrinkage values to consider. Default 20.}
-  \item{sign.wt}{ Allowable signs for feature weights. Can be "both",
-"positive",  or "negative". Default: "both" }
+\item{sign.wt}{Signs of feature weights allowed: "both", "pos", or "neg"}
 }
 \details{
 }
 \value{
-\item{shrinkages}{Shrinkage values used}
-\item{lrtest.shrink}{ Likeihood ratio tests for reduced models }
-\item{num.features}{Number of features used in each shrunken model}
-\item{n.components }{Number of supervised  principal components used}
-
+\item{lrtest.reduced}{ Likelihood ratio tests for reduced models }
+\item{components }{Number of supervised  principal components used}
 \item{v.preval.red}{Outcome predictor from reduced models. Array of
-n.shrinkage by (number of test observations) by n.components}
-\item{n.components }{Number of supervised  principal component used}
-\item{sign.wt}{Allowable signs for feature weights}
+num.reduced.models by (number of test observations)}
 \item{type }{Type of outcome}
 \item{call}{calling sequence}
 }
@@ -49,12 +42,12 @@ set.seed(332)
 x<-matrix(rnorm(1000*40),ncol=40)
 y<-10+svd(x[1:60,])$v[,1]+ .1*rnorm(40)
 ytest<-10+svd(x[1:60,])$v[,1]+ .1*rnorm(40)
-status<- sample(c(rep(1,30),rep(0,10)))
-status.test<- sample(c(rep(1,30),rep(0,10)))
+censoring.status<- sample(c(rep(1,30),rep(0,10)))
+censoring.status.test<- sample(c(rep(1,30),rep(0,10)))
 
 featurenames <- paste("feature",as.character(1:1000),sep="")
-data<-list(x=x,y=y, status=status, featurenames=featurenames)
-data.test<-list(x=x,y=ytest, status=status.test, featurenames= featurenames)
+data<-list(x=x,y=y, censoring.status=censoring.status, featurenames=featurenames)
+data.test<-list(x=x,y=ytest, censoring.status=censoring.status.test, featurenames= featurenames)
 
 
 
@@ -63,10 +56,11 @@ aa<-superpc.cv(a, data)
 
 fit<- superpc.predict(a, data, data.test, threshold=1.0, n.components=1, prediction.type="continuous")
 
-fit.red<- superpc.predict.red(a,data, data.test, .6)
+fit.red<- superpc.predict.red(a,data, data.test, threshold= .6)
 
-fit.redcv<- superpc.predict.red.cv(fit.red, aa,  data,  .6)
+fit.redcv<- superpc.predict.red.cv(fit.red, aa,  data, threshold= .6)
 
+superpc.plotred.lrtest(fit.redcv)
 
 }
 \keyword{regression}% at least one, from doc/KEYWORDS

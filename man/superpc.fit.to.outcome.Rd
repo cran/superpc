@@ -7,13 +7,15 @@
 either coxph (for surival data) or lm (for regression data)
 }
 \usage{
-superpc.fit.to.outcome(fit, data.test, score, print=TRUE)
+superpc.fit.to.outcome(fit, data.test, score, competing.predictors = NULL, print=TRUE, iter.max = 5)
 }
 \arguments{
   \item{fit}{ Object returned by superpc.train }
   \item{data.test}{ Data object for prediction. Same form as data object documented in superpc.train.}  
   \item{score}{Supervised principal component score, from superpc.predict  }
+  \item{competing.predictors}{Optional- list of competing predictors to be included in the model}
 \item{print}{Should a summary of the fit be printed? Default TRUE}
+\item{iter.max}{Max number of iterations used in predictive model fit. Default 5. Currently only relevant for Cox PH model}
 }
 \details{
 }
@@ -31,14 +33,14 @@ set.seed(332)
 x<-matrix(rnorm(1000*20),ncol=20)
 y<-10+svd(x[1:30,])$v[,1]+ .1*rnorm(20)
 ytest<-10+svd(x[1:30,])$v[,1]+ .1*rnorm(20)
-status<- sample(c(rep(1,17),rep(0,3)))
-status.test<- sample(c(rep(1,17),rep(0,3)))
+censoring.status<- sample(c(rep(1,17),rep(0,3)))
+censoring.status.test<- sample(c(rep(1,17),rep(0,3)))
 
 
 
 featurenames <- paste("feature",as.character(1:1000),sep="")
-data<-list(x=x,y=y, status=status, featurenames=featurenames)
-data.test<-list(x=x,y=ytest, status=status.test, featurenames= featurenames)
+data<-list(x=x,y=y, censoring.status=censoring.status, featurenames=featurenames)
+data.test<-list(x=x,y=ytest, censoring.status=censoring.status.test, featurenames= featurenames)
 
 
 

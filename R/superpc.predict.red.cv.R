@@ -1,6 +1,6 @@
-superpc.predict.red.cv <- function(fitred, fitcv, data, threshold, n.shrinkage=30, sign.wt="both"){
+superpc.predict.red.cv <- function(fitred, fitcv, data, threshold,  sign.wt="both"){
 
- # try reduced predictor on cv folds, via prevalidation
+ # try reduced predictor on cv folds, via full cross-validation
 
                            
   this.call=match.call()
@@ -13,35 +13,39 @@ superpc.predict.red.cv <- function(fitred, fitcv, data, threshold, n.shrinkage=3
   n.fold<-length(fitcv$folds)
 
   shrinkages<- fitred$shrinkages
-  n.shrinkage<-length(shrinkages)
-  cur.vall<- array(NA,c(n.shrinkage,ncol(data$x),n.components))
+  n.shrinkages<- length(shrinkages)
+  cur.vall<- array(NA,c(n.shrinkages,ncol(data$x),n.components))
+
+ lrtest.reduced<-array(NA,c(n.fold,n.shrinkages, n.components))
 
   for(j in 1:n.fold){
     cat(j,fill=TRUE)
     fit.temp<-list(feature.scores=fitcv$featurescores.fold[,j], type=type)
     ii<-fitcv$folds[[j]]
     
-    data1<-list(x=data$x[,-ii],y=data$y[-ii],status=data$status[-ii])
-    data2<-list(x=data$x[,ii],y=data$y[ii],status=data$status[ii])
-    junk<- superpc.predict.red(fit.temp, data1,data2, threshold, n.shrinkage=n.shrinkage, n.components=n.components,compute.lrtest=FALSE, sign.wt=sign.wt)
-    cur.vall[,ii,]<-junk$v.test
+    data1<-list(x=data$x[,-ii],y=data$y[-ii],censoring.status=data$censoring.status[-ii])
+    data2<-list(x=data$x[,ii],y=data$y[ii],censoring.status=data$censoring.status[ii])
+    junk<- superpc.predict.red(fit.temp, data1,data2, threshold, shrinkages=shrinkages, n.components=n.components,  compute.lrtest=TRUE, sign.wt=sign.wt)
+ lrtest.reduced[j,,]=junk$lrtest.reduced
   }
 
-  lrtest.shrink<-rep(NA,n.shrinkage)
+ mean.na <- function(x) {
+            mean(x[!is.na(x)])
+        }
+        se.na <- function(x) {
+            val = NA
+            if (sum(!is.na(x)) > 0) {
+                val = sqrt(var(x[!is.na(x)])/sum(!is.na(x)))
+            }
+            return(val)
+        }
 
-  for(i in 1:n.shrinkage){
-    if(type=="survival"){
-      require(survival)
-      junk<- coxph(Surv(data$y, data$status) ~cur.vall[i,,])$loglik
-      lrtest.shrink[i]=2*(junk[2]-junk[1])
-    }
-    else{
-      junk<- summary(lm(data$y~cur.vall[i,,]))
-      if(!is.null(junk$fstat)){lrtest.shrink[i]<-junk$fstat[1]}
-    }
-
-  }
+   llr= apply(log(lrtest.reduced), c(2,3), mean.na)
+        se.llr = apply(log(lrtest.reduced), c(2,3), se.na)
+        lrtest.reduced.lower = exp(llr - se.llr)
+        lrtest.reduced.upper = exp(llr + se.llr)
+        lrtest.reduced <- exp(llr)
 
 
-  return(list(shrinkages=shrinkages, lrtest.shrink=lrtest.shrink, num.features=fitred$num.features, n.components=n.components, v.preval.red=cur.vall, sign.wt=sign.wt, type=type,call=this.call))
+return(list(shrinkages=shrinkages, lrtest.reduced=lrtest.reduced,  lrtest.reduced.lower= lrtest.reduced.lower, lrtest.reduced.upper=lrtest.reduced.upper,  n.components=n.components, num.features=fitred$num.features,  sign.wt=sign.wt, type=type,call=this.call))
 }

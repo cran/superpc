@@ -1,0 +1,139 @@
+superpc.predict.red <- function(train.obj, data, data.test, threshold, component.number=1, n.components=3, num.reduced.models=20,prediction.type=c("continuous", "discrete"), num.features.desired=NULL, compute.lrtest=TRUE, sign.wt="both", n.class=2){
+
+   # try reduced predictor on test set
+
+# if num.features.desired is non-null, fits a single model with that many features
+# works on a single component, indicated by component.number
+  
+  hard.thresh<- function(x,tt){ sign(x)*(abs(x))*(abs(x)>tt)}
+
+
+  this.call<- match.call()
+  prediction.type <- match.arg(prediction.type)
+
+  
+  if(!is.null(num.features.desired)){num.reduced.models=1}
+
+  type=train.obj$type
+
+  lrtest.reduced<- rep(NA,num.reduced.models)
+  
+
+  cur.vall<- matrix (NA,nrow=num.reduced.models,ncol=ncol(data$x))
+  cur.vall.test<- matrix(NA, nrow=num.reduced.models,ncol=ncol(data.test$x))
+                         
+  corr.with.full<-rep(NA,num.reduced.models)
+  
+  which.features <- abs(train.obj$feature.scores) > threshold
+  x.sml <- data$x[which.features, ]
+  x.svd <- mysvd(x.sml, n.components=n.components)
+  xtemp=data$x[which.features, ]
+  xtemp=t(scale(t(xtemp),center=x.svd$feature.means, scale=F))
+
+  cur.v <- scale(t(xtemp) %*%x.svd$u, center=FALSE,scale=x.svd$d)
+
+                                        # flip the sign of the latent factors, if a coef is neg
+
+  result<-superpc.fit.to.outcome(train.obj, data, cur.v, print=FALSE)
+  if(train.obj$type=="survival"){coef=result$coef}
+  if(train.obj$type=="regression"){coef=result$coef[-1]}
+
+  cur.v<-scale(cur.v, center=FALSE,scale= sign(coef))
+
+
+  ##
+ii = component.number
+  
+  import<-cor(t(data$x), cur.v[,ii, drop=F])
+  sc<- data$x%*%cur.v
+
+  # don't shrink all of the way to zero 
+
+                                 
+
+  maxshrink=max(abs(sc))
+
+  if(sign.wt=="positive"){ maxshrink=max(abs(sc[sc>0]))}
+  
+  if(sign.wt=="negative"){ maxshrink=max(abs(sc[sc<0]))}
+
+  if(is.null(num.features.desired)){
+    probs=exp(seq(log(.001),log(.999),length=num.reduced.models))
+    shrinkages<- quantile(abs(sc[,ii]), probs=1-probs)
+  }
+  else{
+    shrinkages=sort(abs(sc[,ii]))[nrow(data$x)-num.features.desired]
+  }
+
+  num.features<-rep(NA,num.reduced.models)
+  
+  feature.list<-vector("list", num.reduced.models)
+
+
+ 
+
+  for(i in 1:num.reduced.models){
+    cat(i)
+    sc2<- hard.thresh(sc[,ii],shrinkages[i])
+    if(sign.wt=="positive"){sc2[sc2<0]<-0}
+    if(sign.wt=="negative"){sc2[sc2>0]<-0}
+    nonzero<-sc2!=0
+    
+
+    num.features[i]<- sum(nonzero)
+    
+
+    
+    feature.list[[i]]=(1:nrow(data$x))[nonzero]
+
+
+  xtemp= data$x[nonzero,,drop=FALSE]
+  feature.means=rowMeans(xtemp)
+  xtemp=t(scale(t(xtemp),center=feature.means, scale=F))
+
+  cur.vall[i,]<-apply(t(scale(t(xtemp), center=FALSE,scale=1/sc2[nonzero])),2,sum)
+
+  xtemp2= data.test$x[nonzero,,drop=FALSE]
+  xtemp2=t(scale(t(xtemp2),center=feature.means, scale=F))
+
+  cur.vall.test[i,]<-apply(t(scale(t(xtemp2), center=FALSE,scale=1/sc2[nonzero])),2,sum)
+
+  if(prediction.type=="discrete") {
+    for(j in 1:ncol(cur.v)){
+      cur.vall.test[i,]<-cut(cur.vall.test[i,],n.class,labels=FALSE)
+    }}
+
+  }
+cat("",fill=TRUE)
+
+
+if(compute.lrtest){ 
+  for(i in 1:num.reduced.models){
+    if(type=="survival"){
+      require(survival)
+      junk<- coxph(Surv(data.test$y, data.test$censoring.status) ~cur.vall.test[i,])$loglik
+      lrtest.reduced[i]=2*(junk[2]-junk[1])
+    }
+    else{
+      junk<- summary(lm(data.test$y~cur.vall.test[i,]))
+      if(!is.null(junk$fstat)){lrtest.reduced[i]<-junk$fstat[1]}
+    }
+  }
+}
+
+for(ii in component.number){
+  if(!is.null(num.features.desired)){
+    corr.with.full=cor((cur.vall),cur.v[,ii,drop=F])
+  }
+  else{
+    corr.with.full=cor(t(cur.vall),cur.v[,ii,drop=F])
+  }}
+
+return(list(shrinkages=shrinkages, lrtest.reduced=lrtest.reduced, corr.with.full=corr.with.full,
+            import=import, wt=sc, v.test=cur.vall.test, num.features=num.features,num.features.desired,
+            component.number=component.number, n.components=n.components,, sign.wt=sign.wt, type=type,call=this.call))
+
+}
+
+
+
