@@ -1,0 +1,112 @@
+superpc.cv <- function (fit, data,  n.threshold = 20, 
+                        n.fold = 10, folds=NULL,  n.components=3,
+                        min.features=5, max.features=nrow(data$x), compute.fullcv=FALSE)
+  
+ # cross-validation for supervised PCs;
+ # returns both  preval cv and fullcv (if requested)  
+
+  
+{
+  this.call <- match.call()
+  type <- fit$type
+
+  if(n.components>5){ cat("Max # of components is 5",fill=TRUE)}
+
+  n.components <- min(5, n.components)
+
+  mean.na<- function(x){mean(x[!is.na(x)])}
+
+  n <- ncol(data$x)
+  cur.tt <- fit$feature.scores
+
+  lower <- quantile(abs(cur.tt), 1 - (max.features/nrow(data$x)))
+  upper <- quantile(abs(cur.tt), 1 - (min.features/nrow(data$x)))
+
+
+  if(is.null(folds)){
+    folds<-vector("list",n.fold)
+    breaks <- round(seq(from = 1, to = (n + 1), length = (n.fold +
+                          1)))
+    cv.order <- sample(1:n)
+    for(j in 1:n.fold){
+      folds[[j]]<-cv.order[(breaks[j]):(breaks[j + 1] - 1)]
+    }
+  }
+
+  featurescores.folds <- matrix(nrow=nrow(data$x), ncol= n.fold)
+
+  th <- seq(from = lower, to = upper, length = n.threshold)
+  nonzero <- rep(0, n.threshold)
+  out <- array(NA, c(n.components, n.threshold, n.fold))
+  out.preval<-matrix(NA,nrow=n.components, ncol=n.threshold)
+
+  cur2<-array(NA,c(n,n.components,n.threshold))
+
+# note, unlike in superpc.predict, we do not flip the signs of the latent
+#factors. I don;t think this will cause a problem!
+
+
+  for (j in 1:n.fold) {
+    cat("",fill=TRUE)
+    cat(c("fold=",j),fill=TRUE)
+    data.temp=list(x=data$x[,-folds[[j]]], y=data$y[-folds[[j]]], status=data$status[-folds[[j]]])
+    cur.tt <- superpc.train(data.temp, type=type)$feature.scores
+    featurescores.folds[,j]<- cur.tt
+    for (i in 1:n.threshold) {
+      cat(i)
+      cur.features <- (abs(cur.tt) > th[i])
+      if(sum(cur.features)>1){
+        
+        nonzero[i] <-  nonzero[i]+sum(cur.features)/n.fold
+        
+        
+        cur.svd <- mysvd(data$x[cur.features, -folds[[j]]],n.components=n.components)
+        
+
+        cur.v.all <- scale(t(data$x[cur.features, folds[[j]], drop=FALSE]) %*% cur.svd$u, center=FALSE,scale=cur.svd$d)
+
+        n.components.eff<- min(sum(cur.features),n.components)
+        cur.v  <- cur.v.all[,1:n.components.eff]
+        cur2[folds[[j]],1:n.components.eff, i]<-cur.v
+
+        if(compute.fullcv){
+          for (k in 1:ncol(cur.v)) {
+            if(type=="survival"){
+              junk <- coxph(Surv(data$y[folds[[j]]], data$status[folds[[j]]]) ~cur.v[, 1:k])$loglik
+              out[k,i, j]<-2*(junk[2]-junk[1]) 
+            }
+            else{
+              junk<-summary(lm(data$y[folds[[j]]]~cur.v[, 1:k]))
+              out[k,i,j]<- junk$fstat[1]
+            }
+
+          }
+        }
+      }
+    }
+  }
+  cat("\n")
+
+  out<- apply(out,c(1,2),mean.na)
+
+  for(i in 1:n.threshold){
+    for(j in 1:n.components){
+      if(type=="survival"){
+        require(survival)
+        junk<-  coxph(Surv(data$y, data$status) ~cur2[, 1:j, i])$loglik
+        out.preval[j,i]<- 2*(junk[2]-junk[1])
+      }
+      else{
+        junk<-summary(lm(data$y~cur2[, 1:j, i]))
+        out.preval[j,i]<- junk$fstat[1]
+      }
+
+    }}
+
+  junk <- list(threshold = th, nonzero=nonzero, scor.preval=out.preval, scor=out,
+               folds=folds, featurescores.folds=featurescores.folds,  v.preval=cur2,  type=type, call = this.call)
+  class(junk) <- "superpc.cv"
+  return(junk)
+}
+
+

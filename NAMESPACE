@@ -1,0 +1,14 @@
+export(superpc.cv,
+superpc.fit.to.outcome,
+superpc.listfeatures,
+superpc.lrtest.curv,
+superpc.plotcv,
+superpc.plot.lrtest,
+superpc.plotshrink.lrtest,
+superpc.predict,
+superpc.predict.red.cv,
+superpc.predict.red,
+superpc.train,
+superpc.predict.red,
+superpc.predict.red.cv)
+
