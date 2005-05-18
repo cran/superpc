@@ -16,6 +16,8 @@ superpc.predict.red.cv <- function(fitred, fitcv, data, threshold,  sign.wt="bot
   n.shrinkages<- length(shrinkages)
   cur.vall<- array(NA,c(n.shrinkages,ncol(data$x),n.components))
 
+import.cv=array(NA,c(nrow(data$x), n.fold,n.components))
+
  lrtest.reduced<-array(NA,c(n.fold,n.shrinkages, n.components))
 
   for(j in 1:n.fold){
@@ -27,6 +29,7 @@ superpc.predict.red.cv <- function(fitred, fitcv, data, threshold,  sign.wt="bot
     data2<-list(x=data$x[,ii],y=data$y[ii],censoring.status=data$censoring.status[ii])
     junk<- superpc.predict.red(fit.temp, data1,data2, threshold, shrinkages=shrinkages, n.components=n.components,  compute.lrtest=TRUE, sign.wt=sign.wt)
  lrtest.reduced[j,,]=junk$lrtest.reduced
+import.cv[,j,]=junk$import
   }
 
  mean.na <- function(x) {
@@ -47,5 +50,5 @@ superpc.predict.red.cv <- function(fitred, fitcv, data, threshold,  sign.wt="bot
         lrtest.reduced <- exp(llr)
 
 
-return(list(shrinkages=shrinkages, lrtest.reduced=lrtest.reduced,  lrtest.reduced.lower= lrtest.reduced.lower, lrtest.reduced.upper=lrtest.reduced.upper,  n.components=n.components, num.features=fitred$num.features,  sign.wt=sign.wt, type=type,call=this.call))
+return(list(shrinkages=shrinkages, lrtest.reduced=lrtest.reduced,  lrtest.reduced.lower= lrtest.reduced.lower, lrtest.reduced.upper=lrtest.reduced.upper,  n.components=n.components, num.features=fitred$num.features,  sign.wt=sign.wt,import.cv=import.cv, type=type,call=this.call))
 }

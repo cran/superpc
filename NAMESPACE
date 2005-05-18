@@ -11,9 +11,11 @@ superpc.predict,
 superpc.predict.red,
 superpc.predict.red.cv,
 superpc.predictionplot,
+superpc.rainbowplot,
 superpc.xl.decorrelate,
 superpc.xl.decorrelate.test,
 superpc.xl.listgenes.compute,
 superpc.xl.fit.to.clin,
-superpc.xl.get.threshold.range)
+superpc.xl.get.threshold.range,
+superpc.xl.rainbowplot)
 

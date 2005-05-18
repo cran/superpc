@@ -10,7 +10,6 @@ superpc.cv(fit, data, n.threshold = 20,  n.fold = NULL, folds = NULL,   n.compon
                  compute.preval = TRUE, xl.mode = c("regular",
                  "firsttime", "onetime", "lasttime"), xl.time = NULL,
                  xl.prevfit = NULL)
- )
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

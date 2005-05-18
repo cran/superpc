@@ -11,6 +11,7 @@
 \alias{superpc.xl.listgenes.compute}
 \alias{superpc.xl.decorrelate}
 \alias{superpc.xl.decorrelate.test}
+\alias{superpc.xl.rainbowplot}
 \description{Internal superpc functions}
 \usage{
 cor.func(x, y,  s0.perc) 
@@ -20,9 +21,10 @@ coxvar(x, y, ic, offset = rep(0, length(y)), coxstuff.obj = NULL)
 mysvd(x, n.components = NULL) 
 superpc.xl.fit.to.clin(fit, data.test,score, pamr.xl.test.sample.labels, pamr.xl.clindata,pamr.xl.clinsamplabels, pamr.xl.clinprednames, pamr.xl.clinpredtype )
 superpc.xl.get.threshold.range(train.obj)
-superpc.xl.listgenes.compute(data, train.obj, fit.red, num.genes=NULL, component.number = 1)
+superpc.xl.listgenes.compute(data, train.obj, fit.red, fitred.cv=NULL,num.genes=NULL, component.number = 1)
 superpc.xl.decorrelate(data, pamr.xl.train.sample.labels, pamr.xl.clindata, pamr.xl.clinsamplabels, pamr.xl.clinprednames, pamr.xl.clinpredtype)
 superpc.xl.decorrelate.test(object.decorr, xtest, pamr.xl.train.sample.labels, pamr.xl.clindata, pamr.xl.clinsamplabels, pamr.xl.clinprednames, pamr.xl.clinpredtype)
+superpc.xl.rainbowplot(data, pred,  pamr.xl.test.sample.labels,  pamr.xl.clindata, pamr.xl.clinsamplabels, pamr.xl.clinprednames,  pamr.xl.clinpredtype, call.win.metafile=FALSE)
 }
 \author{Eric Bair and Rob Tibshirani}
 \details{

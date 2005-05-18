@@ -33,18 +33,16 @@ superpc.predict <- function (object, data, newdata, threshold, n.components=3,  
   if (prediction.type=="continuous" | prediction.type=="discrete") {
       xtemp=newdata$x[which.features,]
 xtemp=t(scale(t(xtemp),center=x.sml.svd$feature.means,scale=F))
-
-#new! weights are standardized to make PC more interpretable
-
 scal=apply(scale(abs(x.sml.svd$u),center=F,scale=x.sml.svd$d),2,sum)
 
-      cur.v <-scale( t(xtemp) %*%x.sml.svd$u,  center=FALSE,scale=scal*x.sml.svd$d)
+#      cur.v <-scale( t(xtemp) %*%x.sml.svd$u,  center=FALSE,scale=scal*x.sml.svd$d)
+      cur.v <-scale( t(xtemp) %*%x.sml.svd$u,  center=FALSE,scale=x.sml.svd$d)
 
 xtemp0=data$x[which.features,]
 
 xtemp0=t(scale(t(xtemp0),center=x.sml.svd$feature.means,scale=F))
 
-      cur.v0 <-scale( t(xtemp0)%*%x.sml.svd$u,  center=FALSE,scale=scal*x.sml.svd$d)
+      cur.v0 <-scale( t(xtemp0)%*%x.sml.svd$u,  center=FALSE,scale=x.sml.svd$d)
 
 
     }

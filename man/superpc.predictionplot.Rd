@@ -5,12 +5,12 @@
 Plots outcome predictions from superpc
 }
 \usage{
-superpc.predictionplot(train.object,data, data.test,  threshold, n.components=1
-  n.class=2,  call.win.metafile=FALSE)
+superpc.predictionplot(train.obj, data, data.test,  threshold, n.components=3,
+  n.class=2, shrinkage=NULL,  call.win.metafile=FALSE)
  
 }
 \arguments{
-  \item{train.object}{ Object returned by superpc.train }
+  \item{train.obj}{ Object returned by superpc.train }
  \item{data}{ List of training data, of form described in superpc.train documen
 tation, }
   \item{data.test}{ List of test data; same form as training data }
@@ -20,6 +20,8 @@ are retained. }
 Should be 1,2 or 3. }
 \item{n.class}{Number of classes for survival stratification. Onply applicable
 for survival data. Default 2.}
+\item{shrinkage}{Shrinkage to be applied to feature loadings. Default is NULL
+meaning no shrinkage}
 \item{call.win.metafile}{Used only by Excel interface call to function}
 }
 \details{

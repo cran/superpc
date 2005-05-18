@@ -25,7 +25,9 @@ superpc.predict.red <- function(fit, data, data.test, threshold, n.components=3,
   which.features <- abs(fit$feature.scores) > threshold
   x.sml <- data$x[which.features, ]
   x.svd <- mysvd(x.sml, n.components=n.components)
-  cur.v <- scale(t(data$x[which.features, ]) %*%x.svd$u, center=FALSE,scale=x.svd$d)
+scal=apply(scale(abs(x.svd$u),center=F,scale=x.svd$d),2,sum)
+
+  cur.v <- scale(t(data$x[which.features, ]) %*%x.svd$u, center=FALSE,scale=scal*x.svd$d)
 
   # flip the sign of the latent factors, if a coef is neg
 

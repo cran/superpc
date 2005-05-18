@@ -5,13 +5,15 @@
  Return a list of the important predictor
 }
 \usage{
-superpc.listfeatures(data, train.obj, fit.red, num.features=NULL, component.number = 1)
+superpc.listfeatures(data, train.obj, fit.red, fitred.cv = NULL,
+num.features=NULL, component.number = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{data}{Data object }
   \item{train.obj}{Object returned by superpc.train}
   \item{fit.red}{Object returned by superpc.predict.red, applied to training set}
+  \item{fitred.cv}{(Optional) object returned by superpc.predict.red.cv}
   \item{num.features}{Number of features to list. Default is all features.  }
   \item{component.number}{Number of principal component (1,2, or 3) used to determine feature importance scores}
  }
@@ -24,6 +26,11 @@ of decreasing absolute value of importance score. The importance score
 is the correlation of the reduced predictor and the full supervised PC
 predictor. It also lists the raw score- for survival data, this is the Cox score
 for that feature; for regression, it is the standardized regression coefficient.
+If fitred.cv is supplied,  the function also reports
+the average rank of the gene in the
+cross-validation folds, and the proportion of times  that the gene is chosen
+(at the given threshold) in the cross-validation folds.
+
 }
 \author{Eric Bair and Rob Tibshirani}
 
