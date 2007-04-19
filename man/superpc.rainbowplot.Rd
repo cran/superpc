@@ -6,24 +6,22 @@ Makes a heatmap display of  outcome predictions from superpc,
  along with expected survival time, and  values of competing predictors
 }
 \usage{
-superpc.rainbowplot(data, pred, sample.labels,  competing.predictors,
-                    call.win.metafile=FALSE)
+ superpc.rainbowplot(data, pred, sample.labels,  competing.predictors, call.win.metafile=FALSE)
 }
 
 \arguments{
-  \item{data}{List of (test) data, of form described in superpc.train
-    documentation}
+ \item{data}{ List of (test) data, of form described in superpc.train documentation}
   \item{pred}{Superpc score from superpc.predict or  superpc.predict.red}
   \item{sample.labels}{Vector of sample labels of test data}
-  \item{competing.predictors}{List of competing predictors to be plotted}
-  \item{call.win.metafile}{Used only by Excel interface call to
-    function}
+\item{competing.predictors}{List of competing predictors to be plotted}
+\item{call.win.metafile}{Used only by Excel interface call to function}
 }
-\details{
-  Any censored survival times are estimated by \eqn{E(T|T>C)}, where
-  \eqn{C} is the observed  censoring  time and the Kaplan-Meier estimate
-  from the training set is used to estimate the expectation.
+
+\details{Any censored survival times are estimated by E(T|T>C), where
+$C$ is the observed  censoring  time and the Kaplan-Meier estimate from
+the training set is used to estimate the expectation.
 }
+
 \value{}
 \author{ Eric Bair and Robert Tibshirani}
 

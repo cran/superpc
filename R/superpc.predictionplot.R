@@ -122,7 +122,7 @@ else{
 }
 
 lr=round(2*(junk$loglik[2]-junk$loglik[1]),4)
-likrat=c(lr, n.class-1,round(1-pchisq(lr,df=n.class),5))
+likrat=c(lr, n.class-1,round(1-pchisq(lr,df=n.class-1),5))
 res=c(res,likrat)
 rownames=c(rownames,"LR stat", "df", "pvalue")
 }
@@ -132,7 +132,7 @@ rownames=c(rownames,"LR stat", "df", "pvalue")
 
 
 lr=round(2*(pred.groups.1df$loglik[2]-pred.groups.1df$loglik[1]),4)
-likrat=c(lr, n.class-1,round(1-pchisq(lr,df=n.class),5))
+likrat=c(lr, n.class-1,round(1-pchisq(lr,df=n.class-1),5))
 res=c(res,likrat)
 rownames=c(rownames,"LR stat", "df", "pvalue")
 

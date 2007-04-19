@@ -9,7 +9,7 @@
 ###Make a big matrix, with enough rows to get in all the folds per class
    bigmat <- matrix(NA, ceiling(fmax/nfolds) * nfolds, length(totals))
    for(i in seq(totals)) {
-     bigmat[seq(totals[i]), i] <- sample(yids[[i]])
+     bigmat[seq(totals[i]), i] <- sample(yids[[i]],size=length(yids[[i]]))
    }
    smallmat <- matrix(bigmat, nrow = nfolds)       # reshape the matrix
 ### Now do a clever sort to mix up the NAs

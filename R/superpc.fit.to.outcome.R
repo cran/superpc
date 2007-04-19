@@ -57,7 +57,7 @@ makelist=function (y, censoring.status, predictors)
 
     if (is.matrix(predictors)) {
         if (ncol(predictors) > 3) {
-            Stop("Can't have > 3 principal components")
+            stop("Can't have > 3 principal components")
         }
 predictor.type=dimnames(predictors)[[2]]
 
