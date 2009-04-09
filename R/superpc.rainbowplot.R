@@ -142,12 +142,12 @@ surv.to.class2 <- function (y, icens, cutoffs=NULL, n.class=NULL,  class.names=N
         if (!is.null(cutoffs) & !is.null(n.class)) {
                 stop("Can't have both cutoffs and n.class specified")
         }
-        data.sfit <- survfit(Surv(y,icens))
+        data.sfit <- survfit(Surv(y,icens)~1)
         if (!is.null(cutoffs)) {
                 if (is.null(class.names)) {
                         class.names <- 1:(length(cutoffs)+1)
                 }
-                cur.mat <- gen.y.mat2(Surv(y, icens), cutoffs, class.names,                                              newdata=Surv(newy, newic))
+                cur.mat <- gen.y.mat2(list(y=y, icens=icens), cutoffs, class.names,                                              newdata=list(y=newy, icens=newic))
         }
         else {
                 if (n.class==1) {
@@ -159,8 +159,8 @@ surv.to.class2 <- function (y, icens, cutoffs=NULL, n.class=NULL,  class.names=N
                 cur.quantiles <- seq(from=0, to=1, length=n.class+1)
                 cur.quantiles <- cur.quantiles[2:n.class]
                 cutoffs <- quantile(y[icens==1], cur.quantiles)
-                cur.mat <- gen.y.mat2(Surv(y, icens), cutoffs, class.names,
-                                newdata=Surv(newy, newic))
+                cur.mat <- gen.y.mat2(list(y=y, icens=icens), cutoffs, class.names,
+                                newdata=list(y=newy, icens=newic))
         }
         mle.classes <- apply(cur.mat, 1, get.mle.class)
          return(list(class=as.numeric(mle.classes), prob=cur.mat, cutoffs=cutoffs))
@@ -173,30 +173,30 @@ gen.y.mat2 <- function(surv.data, cutoffs, class.names=NULL, newdata=surv.data)
 # and uses this information to calculate the probability that
 # a patient with a censored survival time died in a given interval.
 {
-         data.sfit <- survfit(surv.data)
+         data.sfit <- survfit(Surv(surv.data$y,surv.data$icens)~1)
          surv.ndx <- find.surv.ndx(cutoffs, data.sfit$time)
          surv.probs <- c(0, 1-data.sfit$surv[surv.ndx],1)
          surv.probs <- c(rep(0, sum((surv.ndx==0))), surv.probs)
-         cutoffs <- c((min(surv.data[,1])-1), cutoffs, (max(surv.data[,1])+1))
+         cutoffs <- c((min(surv.data$y)-1), cutoffs, (max(surv.data$y)+1))
          y.size <- length(cutoffs)
-         y.mat <- matrix(0,nrow=length(newdata[,1]), ncol=(y.size-1))
+         y.mat <- matrix(0,nrow=length(newdata$y), ncol=(y.size-1))
          for (i in 2:y.size) {
                  cur.int.prob <- surv.probs[i] - surv.probs[i-1]
-                 y.mat[((newdata[,1]<=cutoffs[i])&(newdata[,1]>cutoffs[i-1])&
-                         (newdata[,2]==1)),i-1] <- 1
-                 which.x <- ((newdata[,2]==0)&(newdata[,1]<=cutoffs[i-1]))
+                 y.mat[((newdata$y<=cutoffs[i])&(newdata$y>cutoffs[i-1])&
+                         (newdata$icens==1)),i-1] <- 1
+                 which.x <- ((newdata$icens==0)&(newdata$y<=cutoffs[i-1]))
                  if (sum(which.x)>0) {
-                         which.x.vals <- newdata[which.x,1]
+                         which.x.vals <- newdata$y[which.x]
                          surv.ndx <- find.surv.ndx(which.x.vals,
                                  data.sfit$time)
                          y.mat[which.x,i-1][surv.ndx==0] <- cur.int.prob
                          y.mat[which.x,i-1][surv.ndx!=0] <- cur.int.prob /
                                  data.sfit$surv[surv.ndx]
                  }
-                 which.x <- ((newdata[,2]==0)&(newdata[,1]>cutoffs[i-1])&
-                         (newdata[,1]<=cutoffs[i]))
+                 which.x <- ((newdata$icens==0)&(newdata$y>cutoffs[i-1])&
+                         (newdata$y<=cutoffs[i]))
                  if (sum(which.x>0)) {
-                         which.x.vals <- newdata[which.x,1]
+                         which.x.vals <- newdata$y[which.x]
                          surv.ndx <- find.surv.ndx(which.x.vals,
                                  data.sfit$time)
                          y.mat[which.x,i-1][surv.ndx==0] <- surv.probs[i]
