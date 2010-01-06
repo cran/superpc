@@ -51,7 +51,6 @@ n.shrinkage by (number of test observations) }
 \note{ ~~further notes~~ }
 
 
-\seealso{}
 \examples{
 
 

@@ -22,11 +22,9 @@ $C$ is the observed  censoring  time and the Kaplan-Meier estimate from
 the training set is used to estimate the expectation.
 }
 
-\value{}
 \author{ Eric Bair and Robert Tibshirani}
 
 
-\seealso{}
 \examples{
 set.seed(332)
 x<-matrix(rnorm(1000*40),ncol=40)

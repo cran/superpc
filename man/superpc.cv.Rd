@@ -54,7 +54,6 @@ approach of Tibshirani and Efron (2002)
 \note{ ~~further notes~~ }
 
 
-\seealso{}
 \examples{
 set.seed(332)
 x<-matrix(rnorm(1000*40),ncol=40)

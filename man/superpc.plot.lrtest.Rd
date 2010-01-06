@@ -11,14 +11,9 @@ superpc.plot.lrtest(object.lrtestcurv, call.win.metafile = FALSE)
   \item{object.lrtestcurv}{Output from superpc.lrtest.curv}
 \item{call.win.metafile}{For use by PAM Excel interface}
 }
-\details{
-}
-\value{
-}
 \author{ Eric Bair and Robert Tibshirani }
 
 
-\seealso{}
 \examples{
 
 set.seed(332)

@@ -16,8 +16,6 @@ superpc.decorrelate(x, competing.predictors)
   \item{x}{ matrix of features. Different features  in different  rows, one observation per column}
 \item{competing.predictors}{List of one or more competing predictors.  Discrete predictors should be factors}
 }
-\details{
-}
 \value{
 Returns   lm (linear model) fit of rows of x on compeiting predictors
 }

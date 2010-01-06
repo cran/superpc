@@ -16,8 +16,6 @@ superpc.predict.red.cv(fitred, fitcv, data, threshold, sign.wt="both")
   \item{threshold}{Feature score threshold; usually estimated from superpc.cv}
 \item{sign.wt}{Signs of feature weights allowed: "both", "pos", or "neg"}
 }
-\details{
-}
 \value{
 \item{lrtest.reduced}{ Likelihood ratio tests for reduced models }
 \item{components }{Number of supervised  principal components used}
@@ -32,7 +30,6 @@ num.reduced.models by (number of test observations)}
 \note{ ~~further notes~~ }
 
 
-\seealso{}
 \examples{
 
 

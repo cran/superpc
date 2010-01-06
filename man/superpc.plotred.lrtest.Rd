@@ -16,16 +16,11 @@ or superpc.predict.redcv }
 \item{call.win.metafile}{Used only by PAM Excel interface call to function}
 
 }
-\details{
-}
-\value{
-}
 \references{ ~put references to the literature/web site here ~ }
 \author{ Eric Bair and Robert Tibshirani }
 \note{ ~~further notes~~ }
 
 
-\seealso{}
 \examples{
 set.seed(332)
 #generate some data

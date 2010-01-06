@@ -23,8 +23,6 @@ Should be 1,2 or 3. }
   \item{n.class}{ Number of classes into which predictor is binned
 (for prediction.type="discrete" }
 }
-\details{
-}
 \value{
   \item{v.pred }{Supervised principal componients predictor}
   \item{u }{U matrix from svd of feature matrix x}

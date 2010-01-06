@@ -17,8 +17,6 @@ superpc.fit.to.outcome(fit, data.test, score, competing.predictors = NULL, print
 \item{print}{Should a summary of the fit be printed? Default TRUE}
 \item{iter.max}{Max number of iterations used in predictive model fit. Default 5. Currently only relevant for Cox PH model}
 }
-\details{
-}
 \value{
 Returns summary of coxph or lm fit
 }

@@ -17,7 +17,6 @@ num.features=NULL, component.number = 1)
   \item{num.features}{Number of features to list. Default is all features.}
   \item{component.number}{Number of principal component (1,2, or 3) used to determine feature importance scores}
  }
-\details{}
 
 \value{
 Returns matrix of features and their importance scores, in order

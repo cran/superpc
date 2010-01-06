@@ -24,14 +24,9 @@ for survival data. Default 2.}
 meaning no shrinkage}
 \item{call.win.metafile}{Used only by Excel interface call to function}
 }
-\details{
-}
-\value{
-}
 \author{ Eric Bair and Robert Tibshirani}
 
 
-\seealso{}
 \examples{
 set.seed(332)
 x<-matrix(rnorm(1000*40),ncol=40)

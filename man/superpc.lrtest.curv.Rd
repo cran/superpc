@@ -16,8 +16,6 @@ superpc.lrtest.curv(object, data, newdata, n.components = 1, threshold = NULL, n
  \item{threshold}{ Set of thresholds for scoresL default is n.threshold values equally spaced over the range of the feature scores}
   \item{n.threshold}{ Number of thresholds to use; default 20. Should be 1,2 or 3. }
 }
-\details{
-}
 \value{
   If it is a LIST, use
   \item{lrtest }{Values of likelihood ratio test statistic}
@@ -33,7 +31,6 @@ superpc.lrtest.curv(object, data, newdata, n.components = 1, threshold = NULL, n
 \note{ ~~further notes~~ }
 
 
-\seealso{}
 \examples{
 set.seed(332)
 #generate some data

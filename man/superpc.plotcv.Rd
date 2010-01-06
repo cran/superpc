@@ -19,14 +19,11 @@ If NULL, then degrees of freedom is estimated by cross-validation.}
  \item{call.win.metafile}{Ignore: for use by PAM Excel program}
   \item{\dots}{ Additional plotting args to be passed to matplot }
 }
-\details{
-}
 \value{
 }
 \author{ Eric Bair and Robert Tibshirani}
 
 
-\seealso{}
 \examples{
 set.seed(332)
 x<-matrix(rnorm(1000*40),ncol=40)
