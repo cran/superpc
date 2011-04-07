@@ -22,7 +22,7 @@ Returns summary of coxph or lm fit
 }
 \references{ ~put references to the literature/web site here ~ }
 \author{ Eric Bair and Robert Tibshirani }
-\note{ ~~further notes~~ }
+
 
 \examples{
 set.seed(332)

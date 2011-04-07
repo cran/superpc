@@ -51,7 +51,6 @@ approach of Tibshirani and Efron (2002)
  \item{call }{calling sequence}
 }
 \author{ Eric Bair and Robert Tibshirani  }
-\note{ ~~further notes~~ }
 
 
 \examples{

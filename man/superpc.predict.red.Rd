@@ -48,7 +48,6 @@ n.shrinkage by (number of test observations) }
 }
 \references{ ~put references to the literature/web site here ~ }
 \author{ Eric Bair and Robert Tibshirani }
-\note{ ~~further notes~~ }
 
 
 \examples{

@@ -28,7 +28,6 @@ superpc.lrtest.curv(object, data, newdata, n.components = 1, threshold = NULL, n
 \references{ ~put references to the literature/web site here ~ }
 \author{ Eric Bair and Robert Tibshirani }
 
-\note{ ~~further notes~~ }
 
 
 \examples{

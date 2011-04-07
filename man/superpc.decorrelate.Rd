@@ -21,7 +21,6 @@ Returns   lm (linear model) fit of rows of x on compeiting predictors
 }
 \references{ ~put references to the literature/web site here ~ }
 \author{ Eric Bair and Robert Tibshirani }
-\note{ ~~further notes~~ }
 
 \examples{
 set.seed(332)

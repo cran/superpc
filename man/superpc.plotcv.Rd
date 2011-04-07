@@ -19,8 +19,6 @@ If NULL, then degrees of freedom is estimated by cross-validation.}
  \item{call.win.metafile}{Ignore: for use by PAM Excel program}
   \item{\dots}{ Additional plotting args to be passed to matplot }
 }
-\value{
-}
 \author{ Eric Bair and Robert Tibshirani}
 
 

@@ -18,7 +18,6 @@ or superpc.predict.redcv }
 }
 \references{ ~put references to the literature/web site here ~ }
 \author{ Eric Bair and Robert Tibshirani }
-\note{ ~~further notes~~ }
 
 
 \examples{
