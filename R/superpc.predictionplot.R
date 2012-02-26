@@ -23,7 +23,7 @@ pred.cts.1df=superpc.fit.to.outcome(train.obj, data.test, fit.cts$v.pred.1df, pr
                                }
 else  {
 
-     fit.cts=superpc.predict.red(train.obj, data, data.test, threshold=threshold, n.components=n.components,  shrinkage=shrinkage)
+     fit.cts=superpc.predict.red(train.obj, data, data.test, threshold=threshold, n.components=n.components,  shrinkages=shrinkages)
 
 
 pred.cts=superpc.fit.to.outcome(train.obj, data.test,fit.cts$v.test[,,1:n.components], print=FALSE)$results
@@ -40,11 +40,11 @@ if(call.win.metafile){win.metafile()}
 
 if(train.obj$type=="survival"){
 
-if(n.components==1){layout(matrix(c(1,2),1,2, byrow = TRUE),width=c(.80,.20),heights=c(1,1))}
+if(n.components==1){layout(matrix(c(1,2),1,2, byrow = TRUE),widths=c(.80,.20),heights=c(1,1))}
 
-if(n.components==2){layout(matrix(c(1,4,2,5,3,6),3,2, byrow = TRUE),width=c(.80,.20),heights=c(.34,.33,.33))}
+if(n.components==2){layout(matrix(c(1,4,2,5,3,6),3,2, byrow = TRUE),widths=c(.80,.20),heights=c(.34,.33,.33))}
 
-if(n.components==3){layout(matrix(c(1,5,2,6,3,7,4,8),4,2, byrow = TRUE),width=c(.80,.20),heights=rep(.25,4))}
+if(n.components==3){layout(matrix(c(1,5,2,6,3,7,4,8),4,2, byrow = TRUE),widths=c(.80,.20),heights=rep(.25,4))}
 
 
 if(is.null(shrinkage)){
@@ -60,7 +60,7 @@ pred.groups.1df=superpc.fit.to.outcome(train.obj,  data.test, fit.groups$v.pred.
 }
  else{
    
- fit.groups<- superpc.predict.red(train.obj, data, data.test, threshold=threshold, n.components=n.components, shrinkage=shrinkage, prediction.type="discrete", n.class=n.class)
+ fit.groups<- superpc.predict.red(train.obj, data, data.test, threshold=threshold, n.components=n.components, shrinkages=shrinkages, prediction.type="discrete", n.class=n.class)
 
 
 pred.groups=superpc.fit.to.outcome(train.obj,  data.test,fit.groups$v.test[,,1], print=FALSE)$results
@@ -202,7 +202,7 @@ jj=length(res)-3+j
 }
 
 if(train.obj$type=="regression"){
-layout(matrix(c(1,2),1,2, byrow = TRUE),width=c(.6,.40),heights=c(1,1))
+layout(matrix(c(1,2),1,2, byrow = TRUE),widths=c(.6,.40),heights=c(1,1))
 
 par(mar=c(5,4,2,1))
 

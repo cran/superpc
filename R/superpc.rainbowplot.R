@@ -4,7 +4,7 @@ superpc.rainbowplot=function(data, pred, sample.labels,  competing.predictors, c
 
 extrapolate.surv<- function(y,ic,ncat=100){
 cut<-seq(min(y),max(y),length=ncat)
-b<-surv.to.class2(y,ic,cutoff=cut)
+b<-surv.to.class2(y,ic,cutoffs=cut)
 yhat<-b$prob[,-1]%*%cut
 return(yhat)
 }
@@ -25,7 +25,7 @@ ncomp.predictors=length(competing.predictors)
 
 
 npanels=2*(ncomp.predictors+4)
-layout(matrix(1:npanels,ncomp.predictors+4,2, byrow = TRUE),width=c(.8,.2),heights=c(.2,rep(.1, (ncomp.predictors+2)), .05))
+layout(matrix(1:npanels,ncomp.predictors+4,2, byrow = TRUE),widths=c(.8,.2),heights=c(.2,rep(.1, (ncomp.predictors+2)), .05))
 #layout.show(14)
 par(mar=c(2,0,1,0))
 par(cex=.8)
@@ -56,13 +56,13 @@ return()
 
 my.barplot=function(x,label, type=c("continuous", "discrete"), col=c("red","green","blue", "gray")){
 n=length(x)
- reds <- rgb(r=(0:n)/n, g=0,b=0, names=paste("red",0:n,sep="."))
- greens <- rgb(g=(0:n)/n, r=0,b=0, names=paste("green",0:n,sep="."))
- blues <- rgb(b=(0:n)/n, g=0,r=0, names=paste("blue",0:n,sep="."))
+ reds <- rgb(red=(0:n)/n, green=0,blue=0, names=paste("red",0:n,sep="."))
+ greens <- rgb(green=(0:n)/n, red=0,blue=0, names=paste("green",0:n,sep="."))
+ blues <- rgb(blue=(0:n)/n, green=0,red=0, names=paste("blue",0:n,sep="."))
 
 if(type=="continuous"){
 if(col=="gray"){
- palette(gray(seq(0,.9,len=n)))
+ palette(gray(seq(0,.9,length=n)))
  cols=rank(x)
  }
 

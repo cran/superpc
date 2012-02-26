@@ -113,7 +113,7 @@ function (fit, data, n.threshold = 20, n.fold = NULL, folds = NULL,
                 cur.v.all <- scale(t(xtemp) %*% cur.svd$u, center = FALSE, 
                   scale = cur.svd$d)
                 n.components.eff <- min(sum(cur.features), n.components)
-                cur.v <- cur.v.all[, 1:n.components.eff]
+                cur.v <- cur.v.all[, 1:n.components.eff,drop=FALSE]
                 v.preval[folds[[j]], 1:n.components.eff, i] <- cur.v
                 if (compute.fullcv) {
                   for (k in 1:ncol(cur.v)) {
