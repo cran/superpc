@@ -51,7 +51,7 @@ collabs=c(collabs,"median-rank-in-CV","prop-selected-in-CV")
 
 
 o<-order(-abs(fit.red$import[oo,ii]))
-res<-res[o,]
+res<-rbind(NULL, res[o,])
 dimnames(res)<-list(NULL,collabs)
 
 return(res)
