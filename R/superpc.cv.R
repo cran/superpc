@@ -1,10 +1,5 @@
-superpc.cv=
-function (fit, data, n.threshold = 20, n.fold = NULL, folds = NULL, 
-    n.components = 3, min.features = 5, max.features = nrow(data$x), 
-    compute.fullcv = TRUE, compute.preval = TRUE, xl.mode = c("regular", 
-        "firsttime", "onetime", "lasttime"), xl.time = NULL, 
-    xl.prevfit = NULL) 
-{
+superpc.cv = function(fit, data, n.threshold = 20, n.fold = NULL, folds = NULL, n.components = 3, min.features = 5, max.features = nrow(data$x), compute.fullcv = TRUE, compute.preval = TRUE, xl.mode = c("regular", 
+    "firsttime", "onetime", "lasttime"), xl.time = NULL, xl.prevfit = NULL) {
     this.call <- match.call()
     xl.mode = match.arg(xl.mode)
     if (xl.mode == "regular" | xl.mode == "firsttime") {
@@ -27,28 +22,19 @@ function (fit, data, n.threshold = 20, n.fold = NULL, folds = NULL,
             n.fold = length(folds)
         }
         if (is.null(folds)) {
-            if (type == "survival" & sum(data$censoring.status == 
-                0) > 0) {
-                folds = balanced.folds(data$censoring.status, 
-                  nfolds = n.fold)
-                folds = c(folds, balanced.folds(data$censoring.status, 
-                  nfolds = n.fold))
-                folds = c(folds, balanced.folds(data$censoring.status, 
-                  nfolds = n.fold))
-                folds = c(folds, balanced.folds(data$censoring.status, 
-                  nfolds = n.fold))
-                folds = c(folds, balanced.folds(data$censoring.status, 
-                  nfolds = n.fold))
+            if (type == "survival" & sum(data$censoring.status == 0) > 0) {
+                folds = balanced.folds(data$censoring.status, nfolds = n.fold)
+                folds = c(folds, balanced.folds(data$censoring.status, nfolds = n.fold))
+                folds = c(folds, balanced.folds(data$censoring.status, nfolds = n.fold))
+                folds = c(folds, balanced.folds(data$censoring.status, nfolds = n.fold))
+                folds = c(folds, balanced.folds(data$censoring.status, nfolds = n.fold))
                 n.fold = length(folds)
-            }
-            else {
+            } else {
                 folds <- vector("list", n.fold)
-                breaks <- round(seq(from = 1, to = (n + 1), length = (n.fold + 
-                  1)))
+                breaks <- round(seq(from = 1, to = (n + 1), length = (n.fold + 1)))
                 cv.order <- sample(1:n)
                 for (j in 1:n.fold) {
-                  folds[[j]] <- cv.order[(breaks[j]):(breaks[j + 
-                    1] - 1)]
+                  folds[[j]] <- cv.order[(breaks[j]):(breaks[j + 1] - 1)]
                 }
             }
         }
@@ -96,8 +82,7 @@ function (fit, data, n.threshold = 20, n.fold = NULL, folds = NULL,
     for (j in first:last) {
         cat("", fill = TRUE)
         cat(c("fold=", j), fill = TRUE)
-        data.temp = list(x = data$x[, -folds[[j]]], y = data$y[-folds[[j]]], 
-            censoring.status = data$censoring.status[-folds[[j]]])
+        data.temp = list(x = data$x[, -folds[[j]]], y = data$y[-folds[[j]]], censoring.status = data$censoring.status[-folds[[j]]])
         cur.tt <- superpc.train(data.temp, type = type, s0.perc = fit$s0.perc)$feature.scores
         featurescores.folds[, j] <- cur.tt
         for (i in 1:n.threshold) {
@@ -105,28 +90,21 @@ function (fit, data, n.threshold = 20, n.fold = NULL, folds = NULL,
             cur.features <- (abs(cur.tt) > thresholds[i])
             if (sum(cur.features) > 1) {
                 nonzero[i] <- nonzero[i] + sum(cur.features)/n.fold
-                cur.svd <- mysvd(data$x[cur.features, -folds[[j]]], 
-                  n.components = n.components)
+                cur.svd <- mysvd(data$x[cur.features, -folds[[j]]], n.components = n.components)
                 xtemp = data$x[cur.features, folds[[j]], drop = FALSE]
-                xtemp <- t(scale(t(xtemp), center = cur.svd$feature.means, 
-                  scale = F))
-                cur.v.all <- scale(t(xtemp) %*% cur.svd$u, center = FALSE, 
-                  scale = cur.svd$d)
+                xtemp <- t(scale(t(xtemp), center = cur.svd$feature.means, scale = F))
+                cur.v.all <- scale(t(xtemp) %*% cur.svd$u, center = FALSE, scale = cur.svd$d)
                 n.components.eff <- min(sum(cur.features), n.components)
-                cur.v <- cur.v.all[, 1:n.components.eff,drop=FALSE]
+                cur.v <- cur.v.all[, 1:n.components.eff, drop = FALSE]
                 v.preval[folds[[j]], 1:n.components.eff, i] <- cur.v
                 if (compute.fullcv) {
                   for (k in 1:ncol(cur.v)) {
                     if (type == "survival") {
                       require(survival)
-                      junk <- coxph(Surv(data$y[folds[[j]]], 
-                        data$censoring.status[folds[[j]]]) ~ 
-                        cur.v[, 1:k], control = coxph.control(iter.max = 10))$loglik
+                      junk <- coxph(Surv(data$y[folds[[j]]], data$censoring.status[folds[[j]]]) ~ cur.v[, 1:k], control = coxph.control(iter.max = 10))$loglik
                       scor[k, i, j] <- 2 * (junk[2] - junk[1])
-                    }
-                    else {
-                      junk <- summary(lm(data$y[folds[[j]]] ~ 
-                        cur.v[, 1:k]))
+                    } else {
+                      junk <- summary(lm(data$y[folds[[j]]] ~ cur.v[, 1:k]))
                       scor[k, i, j] <- junk$fstat[1]
                     }
                   }
@@ -157,13 +135,10 @@ function (fit, data, n.threshold = 20, n.fold = NULL, folds = NULL,
                   if (sum(is.na(v.preval[, 1:j, i])) == 0) {
                     if (type == "survival") {
                       require(survival)
-                      junk <- coxph(Surv(data$y, data$censoring.status) ~ 
-                        v.preval[, 1:j, i])$loglik
+                      junk <- coxph(Surv(data$y, data$censoring.status) ~ v.preval[, 1:j, i])$loglik
                       scor.preval[j, i] <- 2 * (junk[2] - junk[1])
-                    }
-                    else {
-                      junk <- summary(lm(data$y ~ v.preval[, 
-                        1:j, i]))
+                    } else {
+                      junk <- summary(lm(data$y ~ v.preval[, 1:j, i]))
                       scor.preval[j, i] <- junk$fstat[1]
                     }
                   }
@@ -171,12 +146,8 @@ function (fit, data, n.threshold = 20, n.fold = NULL, folds = NULL,
             }
         }
     }
-    junk <- list(thresholds = thresholds, n.threshold = n.threshold, 
-        nonzero = nonzero, scor.preval = scor.preval, scor = scor, 
-        scor.lower = scor.lower, scor.upper = scor.upper, folds = folds, 
-        n.fold = n.fold, featurescores.folds = featurescores.folds, 
-        v.preval = v.preval, compute.fullcv = compute.fullcv, 
-        compute.preval = compute.preval, type = type, call = this.call)
+    junk <- list(thresholds = thresholds, n.threshold = n.threshold, nonzero = nonzero, scor.preval = scor.preval, scor = scor, scor.lower = scor.lower, scor.upper = scor.upper, folds = folds, 
+        n.fold = n.fold, featurescores.folds = featurescores.folds, v.preval = v.preval, compute.fullcv = compute.fullcv, compute.preval = compute.preval, type = type, call = this.call)
     class(junk) <- "superpc.cv"
     return(junk)
 }
