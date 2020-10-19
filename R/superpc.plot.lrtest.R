@@ -1,10 +1,14 @@
-superpc.plot.lrtest<- function(object.lrtestcurv, call.win.metafile=FALSE){
+superpc.plot.lrtest <- function(object.lrtestcurv, 
+                                call.win.metafile=FALSE) {
 
-if(call.win.metafile) {win.metafile()}
+    if (call.win.metafile) {
+        dev.new()
+    }
+    
+    plot(object.lrtestcurv$threshold, object.lrtestcurv$lrtest, xlab="Threshold", ylab="Likelihood ratio statistic", type="b")
 
-  plot(object.lrtestcurv$threshold, object.lrtestcurv$lrtest,xlab="Threshold",ylab="Likelihood ratio statistic",type="b")
-
-if(call.win.metafile) {dev.off()}
+    if (call.win.metafile) {
+        dev.off()
+    }
 
 }
-  

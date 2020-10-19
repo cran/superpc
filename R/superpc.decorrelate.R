@@ -1,6 +1,8 @@
+superpc.decorrelate <- function (x, 
+                                 competing.predictors) {
 
-"superpc.decorrelate" <- function (x, competing.predictors) {
-foo<- lm(t(x)~., competing.predictors)
-return(foo)
+    foo <- lm(t(x) ~ ., competing.predictors)
+    
+    return(foo)
+    
 }
-
